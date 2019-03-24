@@ -5,35 +5,53 @@ filetype off
 " Vundle setup
 " ---------------------------------------------------------------------------
 
-set rtp+=~/.vim/bundle/Vundle.vim
-call vundle#begin()
+call plug#begin('~/.vim-plug')
+Plug 'tpope/vim-fugitive'
+Plug 'altercation/solarized', {'rtp': 'vim-colors-solarized/'}
+Plug 'solarnz/arcanist.vim'
+Plug 'vim-airline/vim-airline'
+Plug 'davidhalter/jedi-vim'
+Plug 'scrooloose/nerdtree'
+Plug 'klen/python-mode'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'vim-airline/vim-airline-themes'
+Plug 'kevints/vim-aurora-syntax'
+Plug 'tpope/vim-commentary'
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'tpope/vim-surround'
+Plug 'stephpy/vim-yaml'
+Plug 'solarnz/thrift.vim'
+Plug 'wting/rust.vim'
+Plug 'vim-scripts/a.vim'
+Plug 'b4b4r07/vim-hcl'
+Plug 'cespare/vim-toml'
+Plug 'leafgarland/typescript-vim'
+Plug 'mileszs/ack.vim'
+Plug 'tpope/vim-unimpaired'
+Plug 'digitaltoad/vim-pug'
+Plug 'Quramy/tsuquyomi'
+Plug 'prettier/vim-prettier'
+Plug 'wavded/vim-stylus'
+Plug 'Vimjas/vim-python-pep8-indent'
+Plug 'honza/vim-snippets'
 
-Plugin 'gmarik/Vundle.vim'
-Plugin 'tpope/vim-fugitive'
-Plugin 'solarnz/arcanist.vim'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'FelikZ/ctrlp-py-matcher'
-Plugin 'davidhalter/jedi-vim'
-Plugin 'scrooloose/nerdtree'
-Plugin 'klen/python-mode'
-Plugin 'bling/vim-airline'
-Plugin 'kevints/vim-aurora-syntax'
-Plugin 'tpope/vim-commentary'
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
-Plugin 'jeffkreeftmeijer/vim-numbertoggle'
-Plugin 'tpope/vim-surround'
-Plugin 'stephpy/vim-yaml'
-Plugin 'altercation/solarized', {'rtp': 'vim-colors-solarized/'}
-Plugin 'solarnz/thrift.vim'
-Plugin 'wting/rust.vim'
-Plugin 'wyattanderson/salt-vim'
-Plugin 'a.vim'
-Plugin 'fatih/vim-go'
-Plugin 'b4b4r07/vim-hcl'
-Plugin 'cespare/vim-toml'
+if has('nvim')
+    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+    Plug 'zchee/deoplete-jedi'
 
-call vundle#end()
+    Plug 'flowtype/vim-flow'
+    Plug 'w0rp/ale'
+
+    Plug '/usr/local/opt/fzf'
+    Plug 'junegunn/fzf.vim'
+
+    nnoremap <c-p> :FZF<cr>
+endif
+
+call plug#end()
+
 filetype plugin indent on
 
 " ---------------------------------------------------------------------------
@@ -56,15 +74,16 @@ endif
 
 let mapleader = ","
 
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set smarttab
 set expandtab
-set softtabstop=4
+set softtabstop=2
 set autoindent
 set copyindent
 set number
 set hlsearch
+set incsearch
 set ruler
 set novisualbell
 set backspace=indent,eol,start
@@ -99,9 +118,12 @@ map <silent> <leader><space> :let @/=''<CR>
 inoremap kj <ESC>
 inoremap zkj <ESC>:w<CR>
 nnoremap <silent> <leader>n :NERDTreeToggle<CR>
+nnoremap <silent> <leader>nf :NERDTreeFind<CR>
+nmap <silent> <leader>ti :TsuImport<CR>
 
 nnoremap <Tab> :tabnext<CR>
 nnoremap <S-Tab> :tabprev<CR>
+nnoremap tt  :tabedit ~/.vimrc<CR>
 
 " No arrow keys for you!
 inoremap <Up>    <NOP>
@@ -138,15 +160,40 @@ if has('autocmd')
 endif
 
 let NERDTreeDirArrows=0
+let g:NERDTreeWinSize=60
+let NERDTreeQuitOnOpen=1
 
 let g:ctrlp_working_path_mode = 'ra'
 let g:ctrlp_user_command = ['.git/', 'git --git-dir=%s/.git ls-files -oc --exclude-standard']
-let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
+" let g:ctrlp_match_func = { 'match': 'pymatcher#PyMatch' }
 
 let g:airline_powerline_fonts = 1
+" vim-airline {
+    " Set configuration options for the statusline plugin vim-airline.
+    " Use the powerline theme and optionally enable powerline symbols.
+    " To use the symbols , , , , , , and .in the statusline
+    " segments add the following to your .vimrc.before.local file:
+    "   let g:airline_powerline_fonts=1
+    " If the previous symbols do not render for you then install a
+    " powerline enabled font.
+
+    " See `:echo g:airline_theme_map` for some more choices
+    " Default in terminal vim is 'dark'
+    if isdirectory(expand("~/.vim/bundle/vim-airline-themes/"))
+        if !exists('g:airline_theme')
+            let g:airline_theme = 'solarized'
+        endif
+        if !exists('g:airline_powerline_fonts')
+            " Use the default set of separators with a few customizations
+            let g:airline_left_sep='›'  " Slightly fancier than '>'
+            let g:airline_right_sep='‹' " Slightly fancier than '<'
+        endif
+    endif
+" }
+
 
 let g:pymode_doc = 0
-let g:pymode_folding = 0
+"let g:pymode_folding = 0
 let g:pymode_lint_on_write = 0
 let g:pymode_rope = 0
 let g:pymode_run = 0
@@ -159,10 +206,35 @@ let g:jedi#use_tabs_not_buffers = 0
 
 let g:alternateExtensions_jsx = "scss,css"
 let g:alternateExtensions_js = "scss,css"
-let g:alternateExtensions_css = "jsx,js"
+let g:alternateExtensions_css = "jsx,js,ts"
 let g:alternateExtensions_scss = "jsx"
 
 let g:jsx_ext_required = 0
+" typescript 
+let g:tsuquyomi_single_quote_import = 1
+let g:tsuquyomi_shortest_import_path = 1
 
-colorscheme solarized
+syntax enable
+silent! colorscheme solarized
 set background=dark
+
+if exists('+colorcolumn')
+    set colorcolumn=+1,120
+endif
+
+ab clog console.log(<Left>
+
+set foldmethod=syntax
+set foldlevel=99
+
+"autocmd FileType javascript,typescript,css,less,json setlocal foldlevel=99
+"autocmd FileType javascript,typescript,css,less,json setlocal foldmethod=marker
+"autocmd FileType javascript,typescript,css,less,json setlocal foldmarker={,}
+"
+"
+"Ack settings
+"open a new tab and search for something
+
+nmap <leader>a :tab split<CR>:Ack --ts --pug ""<Left>
+"search for the word under cursor
+nmap <leader>A :tab split<CR>:Ack <C-r><C-w><CR>

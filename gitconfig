@@ -1,6 +1,6 @@
 [user]
-	name = Wyatt Anderson
-	email = wanderson@gmail.com
+	name = David Buchbut
+	email = dwidob@gmail.com
 
 [alias]
     lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
@@ -10,6 +10,7 @@
     mff = merge --ff-only
     mnff = merge --no-ff
     pff = pull --ff-only
+    pr = pull --rebase
     po = push origin
     rbia = rebase -i --autosquash
     sl = stash list
@@ -19,11 +20,13 @@
 	ui = auto
 
 [mergetool "fugitive"]
-	cmd = vim -f -c \"Gdiff\" \"$MERGED\"
+	cmd = mvim -f -c \"Gdiff\" \"$MERGED\"
 
 [merge]
 	tool = fugitive
 [rerere]
 	enabled = 1
 [diff]
-	tool = vimdiff
+	tool = mvimdiff
+[credential]
+	helper = osxkeychain

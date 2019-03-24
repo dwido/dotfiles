@@ -6,3 +6,5 @@
 --ignore-file=ext:pyc
 --type-set=pantsbuild:is:BUILD
 --type-add=js:ext:jsx
+--type-set=ts:ext:ts
+--type-set=pug:ext:pug

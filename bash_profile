@@ -116,6 +116,8 @@ if [ -r ~/.bashrc-local ]; then
     source ~/.bashrc-local
 fi
 
-if [ -r `which virtualenvwrapper.sh` ]; then
-    source virtualenvwrapper.sh
-fi
+#if [ -r `which virtualenvwrapper.sh` ]; then
+#    source virtualenvwrapper.sh
+#fi
+
+test -e "${HOME}/.iterm2_shell_integration.bash" && source "${HOME}/.iterm2_shell_integration.bash"

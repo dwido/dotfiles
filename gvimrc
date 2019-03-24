@@ -18,6 +18,7 @@ set go-=l go-=L go-=r go-=R
 set novb
 
 set cursorline
+set transparency=15
 
 " Tab mappings
 nmap <C-Tab> :tabnext<CR>
@@ -26,3 +27,4 @@ map <C-t> :tabnew<CR>
 
 " Map <C-C> to X11 copy
 noremap <silent> <C-C> "+y<CR>
+set guifont=Anonymous\ Pro\ for\ Powerline:h14
