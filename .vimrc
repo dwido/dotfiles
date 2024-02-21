@@ -21,6 +21,7 @@ Plug 'b4b4r07/vim-hcl'
 Plug 'cespare/vim-toml'
 Plug 'davidhalter/jedi-vim'
 Plug 'vim-scripts/a.vim'
+Plug 'preservim/nerdtree'
 
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -84,6 +85,8 @@ let mapleader = ","
 set listchars=tab:>-,trail:?,eol:$
 nmap <silent> <leader>w :set nolist!<CR>
 map <silent> <leader><space> :let @/=''<CR>
+nnoremap <Leader>n :NERDTreeToggle<CR>
+nnoremap <Leader>nf :NERDTreeFind<CR>
 
 nnoremap <Tab> :tabnext<CR>
 nnoremap <S-Tab> :tabprev<CR>
@@ -101,6 +104,8 @@ noremap  <Right> <NOP>
 " Set up shortcut for toggling number modes since numbertoggle doesn't do it
 " for us anymore
 nnoremap <silent> <C-n> :set relativenumber!<cr>
+
+let g:current_colorscheme = "dark"
 
 silent! colorscheme solarized
 set background=dark
@@ -181,5 +186,18 @@ nnoremap <leader>ap :ALEPreviousWrap<cr>
 
 nnoremap <silent> <leader>l :call system('arc browse ' . expand('%:p') . ':' . line('.'))<CR>
 vnoremap <silent> <leader>l :<C-U>call system('arc browse ' . expand('%:p') . ':' . line("'<") . '-' . line("'>"))<CR>
+nnoremap tt :e $MYVIMRC<CR>
 
 set conceallevel=0
+
+function! ToggleColorScheme()
+  if g:current_colorscheme == "dark"
+    let g:current_colorscheme = "light"
+    set background=light
+  else
+    let g:current_colorscheme = "dark"
+    set background=dark
+  endif
+endfunction
+
+nnoremap <Leader>b :call ToggleColorScheme()<CR>
