@@ -4,6 +4,7 @@ filetype plugin indent on
 
 call plug#begin('~/.vim-plug')
 
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 Plug 'altercation/solarized', {'rtp': 'vim-colors-solarized/'}
@@ -34,13 +35,13 @@ Plug 'zainin/vim-mikrotik'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'saltstack/salt-vim'
 Plug 'jxnblk/vim-mdx-js'
+Plug 'Shougo/ddc.vim'
+Plug 'vim-denops/denops.vim'
 
 if has('nvim')
-    Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-    Plug 'zchee/deoplete-jedi'
-
     Plug 'flowtype/vim-flow'
     Plug 'w0rp/ale'
+
 
     Plug '/usr/local/opt/fzf'
     Plug 'junegunn/fzf.vim'
@@ -201,3 +202,5 @@ function! ToggleColorScheme()
 endfunction
 
 nnoremap <Leader>b :call ToggleColorScheme()<CR>
+
+let g:python_host_prog = "user/bin/python3"
