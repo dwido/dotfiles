@@ -9,6 +9,7 @@
     po = push origin
     rbia = rebase -i --autosquash
     sl = stash list
+	  com = checkout master; pff
 
 [color]
 	diff = auto
@@ -18,7 +19,8 @@
 	cmd = nvim -f -c \"Gdiff\" \"$MERGED\"
 
 [merge]
-	tool = fugitive
+	tool = vimdiff
+	conflictstyle = merge
 
 [rerere]
 	enabled = 1
@@ -35,5 +37,8 @@
 [include]
     path = ~/.gitconfig-local
 [user]
-	name = Wyatt Anderson
+	name = David Buchbut
 	email = wanderson@gmail.com
+[mergetool]
+	keepBackup = false
+	prompt = false

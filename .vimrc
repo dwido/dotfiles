@@ -7,7 +7,8 @@ call plug#begin('~/.vim-plug')
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
-Plug 'altercation/solarized', {'rtp': 'vim-colors-solarized/'}
+"Plug 'altercation/solarized', {'rtp': 'vim-colors-solarized/'}
+Plug 'ericbn/vim-solarized'
 Plug 'solarnz/arcanist.vim'
 Plug 'bling/vim-airline'
 Plug 'kevints/vim-aurora-syntax'
@@ -20,9 +21,9 @@ Plug 'wting/rust.vim'
 Plug 'fatih/vim-go'
 Plug 'b4b4r07/vim-hcl'
 Plug 'cespare/vim-toml'
-Plug 'davidhalter/jedi-vim'
 Plug 'vim-scripts/a.vim'
 Plug 'preservim/nerdtree'
+Plug 'digitaltoad/vim-pug'
 
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
@@ -37,6 +38,7 @@ Plug 'saltstack/salt-vim'
 Plug 'jxnblk/vim-mdx-js'
 Plug 'Shougo/ddc.vim'
 Plug 'vim-denops/denops.vim'
+Plug 'tpope/vim-unimpaired'
 
 if has('nvim')
     Plug 'flowtype/vim-flow'
@@ -46,18 +48,18 @@ if has('nvim')
     Plug '/usr/local/opt/fzf'
     Plug 'junegunn/fzf.vim'
 
-    nnoremap <c-p> :FZF<cr>
+    "nnoremap <c-p> :FZF<cr>
 endif
 
 call plug#end()
 
 syntax on
 
-set tabstop=4
-set shiftwidth=4
+set tabstop=2
+set shiftwidth=2
 set smarttab
 set expandtab
-set softtabstop=4
+set softtabstop=2
 set autoindent
 set copyindent
 set number
@@ -83,11 +85,55 @@ inoremap zkj <ESC>:w<CR>
 
 let mapleader = ","
 
+" COCCCCC
+" Use <c-space> to trigger completion
+if has('nvim')
+  inoremap <silent><expr> <c-space> coc#refresh()
+else
+  inoremap <silent><expr> <c-@> coc#refresh()
+endif
+
+" https://github.com/neoclide/coc.nvim
+" Remap keys for applying codeAction to the current line.
+" Symbol renaming
+nmap <leader>rn <Plug>(coc-rename)
+
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Apply AutoFix to problem on the current line.
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Use `[g` and `]g` to navigate diagnostics
+" Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" GoTo code navigation
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call ShowDocumentation()<CR>
+
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+" End COC
+
 set listchars=tab:>-,trail:?,eol:$
 nmap <silent> <leader>w :set nolist!<CR>
 map <silent> <leader><space> :let @/=''<CR>
+" Nerd tree
 nnoremap <Leader>n :NERDTreeToggle<CR>
 nnoremap <Leader>nf :NERDTreeFind<CR>
+
+let g:NERDTreeQuitOnOpen = 1
+let g:NERDTreeWinSize = 60
 
 nnoremap <Tab> :tabnext<CR>
 nnoremap <S-Tab> :tabprev<CR>
@@ -106,10 +152,26 @@ noremap  <Right> <NOP>
 " for us anymore
 nnoremap <silent> <C-n> :set relativenumber!<cr>
 
-let g:current_colorscheme = "dark"
+let g:current_colorscheme = "light"
 
-silent! colorscheme solarized
-set background=dark
+" Enable 256 colors
+set t_Co=256
+
+" Ensure Vim is aware of the terminal type
+if &term =~ '256color'
+    set t_Co=256
+endif
+
+" Use true color if supported
+if (has("nvim") || has("termguicolors"))
+    set termguicolors
+endif
+
+" Set the Solarized color scheme
+let g:solarized_termcolors=256
+syntax enable
+set background=light
+colorscheme solarized
 
 if exists('+colorcolumn')
     set colorcolumn=+1,120
@@ -204,3 +266,36 @@ endfunction
 nnoremap <Leader>b :call ToggleColorScheme()<CR>
 
 let g:python_host_prog = "user/bin/python3"
+
+let g:ctrlp_user_command = 'rg %s --files --color=never --glob ""'
+let g:ctrlp_use_caching = 0
+
+" Map CtrlP to use ripgrep with fzf
+" command! -bang -nargs=* Rg call fzf#vim#grep('rg --column --line-number --no-heading --color=always --smart-case '.shellescape(''), 1, fzf#vim#with_preview({'options': '--delimiter : --nth 4..'}), <bang>0)
+nnoremap <C-p> :Files<CR>
+vnoremap <C-p> :Files<CR>
+
+inoremap clog console.log('
+
+" Autocmd that triggers after quitting Vim
+autocmd VimLeave * call ClearSwapFiles()
+
+" Function to remove swap files for buffers with no changes
+function! ClearSwapFiles()
+  " Loop through all buffers
+  for buf in range(1, bufnr('$'))
+    " Check if buffer exists and is not modified
+    if bufexists(buf) && !getbufvar(buf, '&mod')
+      let swapfile = getbufvar(buf, '&swapfile')
+      let filename = bufname(buf)
+      " If swapfile is set and file exists
+      if swapfile && !empty(filename) && filewritable(filename) == 2
+        let swapname = swapname(filename, v:servername, buf)
+        " If the swap file exists, remove it
+        if filewritable(swapname) == 2
+          call delete(swapname)
+        endif
+      endif
+    endif
+  endfor
+endfunction
